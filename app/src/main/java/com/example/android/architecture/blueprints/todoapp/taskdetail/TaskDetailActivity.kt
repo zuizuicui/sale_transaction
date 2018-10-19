@@ -32,7 +32,7 @@ import dagger.android.support.DaggerAppCompatActivity
  */
 class TaskDetailActivity : DaggerAppCompatActivity() {
     @Inject
-    internal var injectedFragment: TaskDetailFragment? = null
+    lateinit var injectedFragment: TaskDetailFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

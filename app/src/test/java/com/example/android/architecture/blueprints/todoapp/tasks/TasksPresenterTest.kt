@@ -16,6 +16,9 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import com.example.android.architecture.blueprints.todoapp.any
+import com.example.android.architecture.blueprints.todoapp.argumentCaptor
+import com.example.android.architecture.blueprints.todoapp.capture
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource.LoadTasksCallback
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
@@ -29,7 +32,6 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
 import org.junit.Assert.assertTrue
-import org.mockito.Matchers.any
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -40,10 +42,10 @@ import org.mockito.Mockito.`when`
 class TasksPresenterTest {
 
     @Mock
-    private val mTasksRepository: TasksRepository? = null
+    lateinit var mTasksRepository: TasksRepository
 
     @Mock
-    private val mTasksView: TasksContract.View? = null
+    lateinit var mTasksView: TasksContract.View
 
     /**
      * [ArgumentCaptor] is a powerful Mockito API to capture argument values and use them to
@@ -61,8 +63,8 @@ class TasksPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         // Get a reference to the class under test
-        mTasksPresenter = TasksPresenter(mTasksRepository!!)
-        mTasksPresenter!!.takeView(mTasksView!!)
+        mTasksPresenter = TasksPresenter(mTasksRepository)
+        mTasksPresenter!!.takeView(mTasksView)
 
         // The presenter won't update the view unless it's active.
         `when`(mTasksView.isActive).thenReturn(true)
@@ -81,15 +83,15 @@ class TasksPresenterTest {
 
         // Callback is captured and invoked with stubbed tasks twice
         //First time is when the fragment is bound to the view and a second time when we force another load
-        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onTasksLoaded(TASKS!!)
 
         // Then progress indicator is shown
-        verify<View>(mTasksView, times(2)).setLoadingIndicator(true)
+        verify(mTasksView, times(2)).setLoadingIndicator(true)
         // Then progress indicator is hidden and all tasks are shown in UI
-        verify<View>(mTasksView, times(1)).setLoadingIndicator(false)
-        val showTasksArgumentCaptor = ArgumentCaptor.forClass(List<*>::class.java)
-        verify<View>(mTasksView).showTasks(showTasksArgumentCaptor.capture())
+        verify(mTasksView, times(1)).setLoadingIndicator(false)
+        val showTasksArgumentCaptor = argumentCaptor<List<Task>>()
+        verify(mTasksView).showTasks(capture(showTasksArgumentCaptor))
         assertTrue(showTasksArgumentCaptor.value.size == 3)
     }
 
@@ -101,13 +103,13 @@ class TasksPresenterTest {
         mTasksPresenter!!.loadTasks(true)
 
         // Callback is captured and invoked with stubbed tasks
-        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onTasksLoaded(TASKS!!)
 
         // Then progress indicator is hidden and active tasks are shown in UI
-        verify<View>(mTasksView).setLoadingIndicator(false)
-        val showTasksArgumentCaptor = ArgumentCaptor.forClass(List<*>::class.java)
-        verify<View>(mTasksView).showTasks(showTasksArgumentCaptor.capture())
+        verify(mTasksView).setLoadingIndicator(false)
+        val showTasksArgumentCaptor = argumentCaptor<List<Task>>()
+        verify(mTasksView).showTasks(capture(showTasksArgumentCaptor))
         assertTrue(showTasksArgumentCaptor.value.size == 1)
     }
 
@@ -119,13 +121,13 @@ class TasksPresenterTest {
         mTasksPresenter!!.loadTasks(true)
 
         // Callback is captured and invoked with stubbed tasks
-        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onTasksLoaded(TASKS!!)
 
         // Then progress indicator is hidden and completed tasks are shown in UI
-        verify<View>(mTasksView).setLoadingIndicator(false)
-        val showTasksArgumentCaptor = ArgumentCaptor.forClass(List<*>::class.java)
-        verify<View>(mTasksView).showTasks(showTasksArgumentCaptor.capture())
+        verify(mTasksView).setLoadingIndicator(false)
+        val showTasksArgumentCaptor = argumentCaptor<List<Task>>()
+        verify(mTasksView).showTasks(capture(showTasksArgumentCaptor))
         assertTrue(showTasksArgumentCaptor.value.size == 2)
     }
 
@@ -135,7 +137,7 @@ class TasksPresenterTest {
         mTasksPresenter!!.addNewTask()
 
         // Then add task UI is shown
-        verify<View>(mTasksView).showAddTask()
+        verify(mTasksView).showAddTask()
     }
 
     @Test
@@ -147,7 +149,7 @@ class TasksPresenterTest {
         mTasksPresenter!!.openTaskDetails(requestedTask)
 
         // Then task detail UI is shown
-        verify<View>(mTasksView).showTaskDetailsUi(any(String::class.java))
+        verify(mTasksView).showTaskDetailsUi(any())
     }
 
     @Test
@@ -160,7 +162,7 @@ class TasksPresenterTest {
 
         // Then repository is called and task marked complete UI is shown
         verify<TasksRepository>(mTasksRepository).completeTask(task)
-        verify<View>(mTasksView).showTaskMarkedComplete()
+        verify(mTasksView).showTaskMarkedComplete()
     }
 
     @Test
@@ -174,7 +176,7 @@ class TasksPresenterTest {
 
         // Then repository is called and task marked active UI is shown
         verify<TasksRepository>(mTasksRepository).activateTask(task)
-        verify<View>(mTasksView).showTaskMarkedActive()
+        verify(mTasksView).showTaskMarkedActive()
     }
 
     @Test
@@ -184,11 +186,11 @@ class TasksPresenterTest {
         mTasksPresenter!!.loadTasks(true)
 
         // And the tasks aren't available in the repository
-        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository, times(2)).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onDataNotAvailable()
 
         // Then an error message is shown
-        verify<View>(mTasksView).showLoadingTasksError()
+        verify(mTasksView).showLoadingTasksError()
     }
 
     companion object {

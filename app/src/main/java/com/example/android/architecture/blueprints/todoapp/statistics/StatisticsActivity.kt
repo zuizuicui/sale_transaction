@@ -38,9 +38,10 @@ import dagger.android.support.DaggerAppCompatActivity
 class StatisticsActivity : DaggerAppCompatActivity() {
 
     @Inject
-    internal var mStatiticsPresenter: StatisticsPresenter? = null
+    lateinit var mPresenter: StatisticsContract.Presenter
+
     @Inject
-    internal var fragment: StatisticsFragment? = null
+    lateinit var fragment: StatisticsFragment
     private var mDrawerLayout: DrawerLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

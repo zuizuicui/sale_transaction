@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.statistics
 
+import com.example.android.architecture.blueprints.todoapp.capture
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
@@ -37,10 +38,10 @@ import org.mockito.Mockito.`when`
 class StatisticsPresenterTest {
 
     @Mock
-    private val mTasksRepository: TasksRepository? = null
+    lateinit var mTasksRepository: TasksRepository
 
     @Mock
-    private val mStatisticsView: StatisticsContract.View? = null
+    lateinit var mStatisticsView: StatisticsContract.View
 
     /**
      * [ArgumentCaptor] is a powerful Mockito API to capture argument values and use them to
@@ -59,8 +60,8 @@ class StatisticsPresenterTest {
         MockitoAnnotations.initMocks(this)
 
         // Get a reference to the class under test
-        mStatisticsPresenter = StatisticsPresenter(mTasksRepository!!)
-        mStatisticsPresenter!!.takeView(mStatisticsView!!)
+        mStatisticsPresenter = StatisticsPresenter(mTasksRepository)
+        mStatisticsPresenter!!.takeView(mStatisticsView)
 
         // The presenter won't update the view unless it's active.
         `when`(mStatisticsView.isActive).thenReturn(true)
@@ -76,15 +77,15 @@ class StatisticsPresenterTest {
         TASKS!!.clear()
 
         //Then progress indicator is shown
-        verify<View>(mStatisticsView).setProgressIndicator(true)
+        verify(mStatisticsView).setProgressIndicator(true)
 
         // Callback is captured and invoked with stubbed tasks
-        verify<TasksRepository>(mTasksRepository).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onTasksLoaded(TASKS!!)
 
         // Then progress indicator is hidden and correct data is passed on to the view
-        verify<View>(mStatisticsView).setProgressIndicator(false)
-        verify<View>(mStatisticsView).showStatistics(0, 0)
+        verify(mStatisticsView).setProgressIndicator(false)
+        verify(mStatisticsView).showStatistics(0, 0)
     }
 
     @Test
@@ -92,25 +93,25 @@ class StatisticsPresenterTest {
         // Given an initialized StatisticsPresenter with 1 active and 2 completed tasks
 
         //Then progress indicator is shown
-        verify<View>(mStatisticsView).setProgressIndicator(true)
+        verify(mStatisticsView).setProgressIndicator(true)
 
         // Callback is captured and invoked with stubbed tasks
-        verify<TasksRepository>(mTasksRepository).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onTasksLoaded(TASKS!!)
 
         // Then progress indicator is hidden and correct data is passed on to the view
-        verify<View>(mStatisticsView).setProgressIndicator(false)
-        verify<View>(mStatisticsView).showStatistics(1, 2)
+        verify(mStatisticsView).setProgressIndicator(false)
+        verify(mStatisticsView).showStatistics(1, 2)
     }
 
     @Test
     fun loadStatisticsWhenTasksAreUnavailable_CallErrorToDisplay() {
         // And tasks data isn't available
-        verify<TasksRepository>(mTasksRepository).getTasks(mLoadTasksCallbackCaptor!!.capture())
+        verify<TasksRepository>(mTasksRepository).getTasks(capture(mLoadTasksCallbackCaptor!!))
         mLoadTasksCallbackCaptor.value.onDataNotAvailable()
 
         // Then an error message is shown
-        verify<View>(mStatisticsView).showLoadingStatisticsError()
+        verify(mStatisticsView).showLoadingStatisticsError()
     }
 
     companion object {

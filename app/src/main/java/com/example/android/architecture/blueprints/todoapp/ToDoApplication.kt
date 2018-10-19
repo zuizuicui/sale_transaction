@@ -20,7 +20,7 @@ class ToDoApplication : DaggerApplication() {
      */
     @Inject
     @get:VisibleForTesting
-    var tasksRepository: TasksRepository? = null
+    lateinit var tasksRepository: TasksRepository
         internal set
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {

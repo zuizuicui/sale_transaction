@@ -41,7 +41,7 @@ constructor()// Required empty public constructor
     : DaggerFragment(), AddEditTaskContract.View {
 
     @Inject
-    internal var mPresenter: AddEditTaskContract.Presenter? = null
+    lateinit var mPresenter: AddEditTaskContract.Presenter
 
     private var mTitle: TextView? = null
 
@@ -53,25 +53,24 @@ constructor()// Required empty public constructor
     override fun onResume() {
         super.onResume()
         //Bind view to the presenter which will signal for the presenter to load the task.
-        mPresenter!!.takeView(this)
+        mPresenter.takeView(this)
     }
 
     override fun onPause() {
-        mPresenter!!.dropView()
+        mPresenter.dropView()
         super.onPause()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val fab = activity.findViewById<FloatingActionButton>(R.id.fab_edit_task_done)
+        val fab = activity!!.findViewById<FloatingActionButton>(R.id.fab_edit_task_done)
         fab.setImageResource(R.drawable.ic_done)
-        fab.setOnClickListener { mPresenter!!.saveTask(mTitle!!.text.toString(), mDescription!!.text.toString()) }
+        fab.setOnClickListener { mPresenter.saveTask(mTitle!!.text.toString(), mDescription!!.text.toString()) }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val root = inflater!!.inflate(R.layout.addtask_frag, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val root = inflater.inflate(R.layout.addtask_frag, container, false)
         mTitle = root.findViewById(R.id.add_task_title)
         mDescription = root.findViewById(R.id.add_task_description)
 
@@ -85,8 +84,8 @@ constructor()// Required empty public constructor
     }
 
     override fun showTasksList() {
-        activity.setResult(Activity.RESULT_OK)
-        activity.finish()
+        activity!!.setResult(Activity.RESULT_OK)
+        activity!!.finish()
     }
 
     override fun setTitle(title: String) {

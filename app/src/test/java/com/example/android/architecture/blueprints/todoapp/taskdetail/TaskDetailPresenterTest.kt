@@ -16,24 +16,15 @@
 
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
+import com.example.android.architecture.blueprints.todoapp.capture
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
-
+import com.example.android.architecture.blueprints.todoapp.eq
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.InOrder
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
-
-import org.mockito.Matchers.eq
-import org.mockito.Mockito.inOrder
-import org.mockito.Mockito.never
-import org.mockito.Mockito.times
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
+import org.mockito.*
+import org.mockito.Mockito.*
 
 /**
  * Unit tests for the implementation of [TaskDetailPresenter]
@@ -41,10 +32,10 @@ import org.mockito.Mockito.`when`
 class TaskDetailPresenterTest {
 
     @Mock
-    private val mTasksRepository: TasksRepository? = null
+    lateinit var mTasksRepository: TasksRepository
 
     @Mock
-    private val mTaskDetailView: TaskDetailContract.View? = null
+    lateinit var mTaskDetailView: TaskDetailContract.View
 
     /**
      * [ArgumentCaptor] is a powerful Mockito API to capture argument values and use them to
@@ -69,55 +60,55 @@ class TaskDetailPresenterTest {
     fun getActiveTaskFromRepositoryAndLoadIntoView() {
         // When tasks presenter is asked to open a task
         mTaskDetailPresenter = TaskDetailPresenter(
-                ACTIVE_TASK.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                ACTIVE_TASK.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
 
         // Then task is loaded from model, callback is captured and progress indicator is shown
-        verify(mTasksRepository).getTask(eq(ACTIVE_TASK.id), mGetTaskCallbackCaptor!!.capture())
+        verify(mTasksRepository).getTask(eq(ACTIVE_TASK.id), capture(mGetTaskCallbackCaptor!!))
         val inOrder = inOrder(mTaskDetailView)
-        inOrder.verify<View>(mTaskDetailView).setLoadingIndicator(true)
+        inOrder.verify(mTaskDetailView).setLoadingIndicator(true)
 
         // When task is finally loaded
         mGetTaskCallbackCaptor.value.onTaskLoaded(ACTIVE_TASK) // Trigger callback
 
         // Then progress indicator is hidden and title, description and completion status are shown
         // in UI
-        inOrder.verify<View>(mTaskDetailView).setLoadingIndicator(false)
-        verify<View>(mTaskDetailView).showTitle(TITLE_TEST)
-        verify<View>(mTaskDetailView).showDescription(DESCRIPTION_TEST)
-        verify<View>(mTaskDetailView).showCompletionStatus(false)
+        inOrder.verify(mTaskDetailView).setLoadingIndicator(false)
+        verify(mTaskDetailView).showTitle(TITLE_TEST)
+        verify(mTaskDetailView).showDescription(DESCRIPTION_TEST)
+        verify(mTaskDetailView).showCompletionStatus(false)
     }
 
     @Test
     fun getCompletedTaskFromRepositoryAndLoadIntoView() {
         mTaskDetailPresenter = TaskDetailPresenter(
-                COMPLETED_TASK.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                COMPLETED_TASK.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
 
         // Then task is loaded from model, callback is captured and progress indicator is shown
         verify(mTasksRepository).getTask(
-                eq(COMPLETED_TASK.id), mGetTaskCallbackCaptor!!.capture())
+                eq(COMPLETED_TASK.id), capture(mGetTaskCallbackCaptor!!))
         val inOrder = inOrder(mTaskDetailView)
-        inOrder.verify<View>(mTaskDetailView).setLoadingIndicator(true)
+        inOrder.verify(mTaskDetailView).setLoadingIndicator(true)
 
         // When task is finally loaded
         mGetTaskCallbackCaptor.value.onTaskLoaded(COMPLETED_TASK) // Trigger callback
 
         // Then progress indicator is hidden and title, description and completion status are shown
         // in UI
-        inOrder.verify<View>(mTaskDetailView).setLoadingIndicator(false)
-        verify<View>(mTaskDetailView).showTitle(TITLE_TEST)
-        verify<View>(mTaskDetailView).showDescription(DESCRIPTION_TEST)
-        verify<View>(mTaskDetailView).showCompletionStatus(true)
+        inOrder.verify(mTaskDetailView).setLoadingIndicator(false)
+        verify(mTaskDetailView).showTitle(TITLE_TEST)
+        verify(mTaskDetailView).showDescription(DESCRIPTION_TEST)
+        verify(mTaskDetailView).showCompletionStatus(true)
     }
 
     @Test
     fun getUnknownTaskFromRepositoryAndLoadIntoView() {
         // When loading of a task is requested with an invalid task ID.
         mTaskDetailPresenter = TaskDetailPresenter(
-                INVALID_TASK_ID, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
-        verify<View>(mTaskDetailView).showMissingTask()
+                INVALID_TASK_ID, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
+        verify(mTaskDetailView).showMissingTask()
     }
 
     @Test
@@ -127,13 +118,13 @@ class TaskDetailPresenterTest {
 
         // When the deletion of a task is requested
         mTaskDetailPresenter = TaskDetailPresenter(
-                task.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                task.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
         mTaskDetailPresenter!!.deleteTask()
 
         // Then the repository and the view are notified
         verify(mTasksRepository).deleteTask(task.id)
-        verify<View>(mTaskDetailView).showTaskDeleted()
+        verify(mTaskDetailView).showTaskDeleted()
     }
 
     @Test
@@ -141,15 +132,15 @@ class TaskDetailPresenterTest {
         // Given an initialized presenter with an active task
         val task = Task(TITLE_TEST, DESCRIPTION_TEST)
         mTaskDetailPresenter = TaskDetailPresenter(
-                task.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                task.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
 
         // When the presenter is asked to complete the task
         mTaskDetailPresenter!!.completeTask()
 
         // Then a request is sent to the task repository and the UI is updated
         verify(mTasksRepository).completeTask(task.id)
-        verify<View>(mTaskDetailView).showTaskMarkedComplete()
+        verify(mTaskDetailView).showTaskMarkedComplete()
     }
 
     @Test
@@ -157,41 +148,41 @@ class TaskDetailPresenterTest {
         // Given an initialized presenter with a completed task
         val task = Task(TITLE_TEST, DESCRIPTION_TEST, true)
         mTaskDetailPresenter = TaskDetailPresenter(
-                task.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                task.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
 
         // When the presenter is asked to activate the task
         mTaskDetailPresenter!!.activateTask()
 
         // Then a request is sent to the task repository and the UI is updated
         verify(mTasksRepository).activateTask(task.id)
-        verify<View>(mTaskDetailView).showTaskMarkedActive()
+        verify(mTaskDetailView).showTaskMarkedActive()
     }
 
     @Test
     fun activeTaskIsShownWhenEditing() {
         // When the edit of an ACTIVE_TASK is requested
         mTaskDetailPresenter = TaskDetailPresenter(
-                ACTIVE_TASK.id, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                ACTIVE_TASK.id, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
         mTaskDetailPresenter!!.editTask()
 
         // Then the view is notified
-        verify<View>(mTaskDetailView).showEditTask(ACTIVE_TASK.id)
+        verify(mTaskDetailView).showEditTask(ACTIVE_TASK.id)
     }
 
     @Test
     fun invalidTaskIsNotShownWhenEditing() {
         // When the edit of an invalid task id is requested
         mTaskDetailPresenter = TaskDetailPresenter(
-                INVALID_TASK_ID, mTasksRepository!!)
-        mTaskDetailPresenter!!.takeView(mTaskDetailView!!)
+                INVALID_TASK_ID, mTasksRepository)
+        mTaskDetailPresenter!!.takeView(mTaskDetailView)
         mTaskDetailPresenter!!.editTask()
 
         // Then the edit mode is never started
-        verify<View>(mTaskDetailView, never()).showEditTask(INVALID_TASK_ID)
+        verify(mTaskDetailView, never()).showEditTask(INVALID_TASK_ID)
         // instead, the error is shown. once when we try to open the task then again when we edit
-        verify<View>(mTaskDetailView, times(2)).showMissingTask()
+        verify(mTaskDetailView, times(2)).showMissingTask()
     }
 
     companion object {

@@ -36,7 +36,7 @@ constructor() : TasksDataSource {
 
     override fun getTask(taskId: String, callback: TasksDataSource.GetTaskCallback) {
         val task = TASKS_SERVICE_DATA[taskId]
-        callback.onTaskLoaded(task)
+        callback.onTaskLoaded(task!!)
     }
 
     override fun saveTask(task: Task) {

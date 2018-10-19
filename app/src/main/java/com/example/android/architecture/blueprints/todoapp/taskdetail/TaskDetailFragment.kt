@@ -48,9 +48,9 @@ import dagger.android.support.DaggerFragment
 class TaskDetailFragment @Inject
 constructor() : DaggerFragment(), TaskDetailContract.View {
     @Inject
-    internal var taskId: String? = null
+    lateinit var taskId: String
     @Inject
-    internal var mPresenter: TaskDetailContract.Presenter? = null
+    lateinit var mPresenter: TaskDetailContract.Presenter
     private var mDetailTitle: TextView? = null
     private var mDetailDescription: TextView? = null
     private var mDetailCompleteStatus: CheckBox? = null
@@ -69,8 +69,7 @@ constructor() : DaggerFragment(), TaskDetailContract.View {
         super.onDestroy()
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater!!.inflate(R.layout.taskdetail_frag, container, false)
         setHasOptionsMenu(true)
         mDetailTitle = root.findViewById(R.id.task_detail_title)
@@ -78,7 +77,7 @@ constructor() : DaggerFragment(), TaskDetailContract.View {
         mDetailCompleteStatus = root.findViewById(R.id.task_detail_complete)
 
         // Set up floating action button
-        val fab = activity.findViewById<FloatingActionButton>(R.id.fab_edit_task)
+        val fab = activity!!.findViewById<FloatingActionButton>(R.id.fab_edit_task)
 
         fab.setOnClickListener { mPresenter!!.editTask() }
 
@@ -88,7 +87,7 @@ constructor() : DaggerFragment(), TaskDetailContract.View {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item!!.itemId) {
             R.id.menu_delete -> {
-                mPresenter!!.deleteTask()
+                mPresenter.deleteTask()
                 return true
             }
         }
@@ -139,7 +138,7 @@ constructor() : DaggerFragment(), TaskDetailContract.View {
     }
 
     override fun showTaskDeleted() {
-        activity.finish()
+        activity!!.finish()
     }
 
     override fun showTaskMarkedComplete() {
@@ -156,7 +155,7 @@ constructor() : DaggerFragment(), TaskDetailContract.View {
         if (requestCode == REQUEST_EDIT_TASK) {
             // If the task was edited successfully, go back to the list.
             if (resultCode == Activity.RESULT_OK) {
-                activity.finish()
+                activity!!.finish()
             }
         }
     }

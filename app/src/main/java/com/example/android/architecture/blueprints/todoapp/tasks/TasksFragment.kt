@@ -59,7 +59,7 @@ constructor()// Requires empty public constructor
     : DaggerFragment(), TasksContract.View {
 
     @Inject
-    internal var mPresenter: TasksContract.Presenter? = null
+    lateinit var mPresenter: TasksContract.Presenter
     /**
      * Listener for clicks on tasks in the ListView.
      */
@@ -108,7 +108,7 @@ constructor()// Requires empty public constructor
         mPresenter!!.result(requestCode, resultCode)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val root = inflater!!.inflate(R.layout.tasks_frag, container, false)
 
@@ -126,7 +126,7 @@ constructor()// Requires empty public constructor
         mNoTaskAddView!!.setOnClickListener { showAddTask() }
 
         // Set up floating action button
-        val fab = activity.findViewById<FloatingActionButton>(R.id.fab_add_task)
+        val fab = activity!!.findViewById<FloatingActionButton>(R.id.fab_add_task)
 
         fab.setImageResource(R.drawable.ic_add)
         fab.setOnClickListener { mPresenter!!.addNewTask() }
@@ -134,9 +134,9 @@ constructor()// Requires empty public constructor
         // Set up progress indicator
         val swipeRefreshLayout = root.findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout)
         swipeRefreshLayout.setColorSchemeColors(
-                ContextCompat.getColor(activity, R.color.colorPrimary),
-                ContextCompat.getColor(activity, R.color.colorAccent),
-                ContextCompat.getColor(activity, R.color.colorPrimaryDark)
+                ContextCompat.getColor(activity!!, R.color.colorPrimary),
+                ContextCompat.getColor(activity!!, R.color.colorAccent),
+                ContextCompat.getColor(activity!!, R.color.colorPrimaryDark)
         )
         // Set the scrolling view in the custom SwipeRefreshLayout.
         swipeRefreshLayout.setScrollUpChild(listView)
@@ -162,7 +162,7 @@ constructor()// Requires empty public constructor
     }
 
     override fun showFilteringPopUpMenu() {
-        val popup = PopupMenu(context, activity.findViewById(R.id.menu_filter))
+        val popup = PopupMenu(context!!, activity!!.findViewById(R.id.menu_filter))
         popup.menuInflater.inflate(R.menu.filter_tasks, popup.menu)
 
         popup.setOnMenuItemClickListener { item ->

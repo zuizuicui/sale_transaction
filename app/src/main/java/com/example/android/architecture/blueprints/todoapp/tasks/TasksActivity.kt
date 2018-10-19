@@ -36,9 +36,9 @@ import dagger.android.support.DaggerAppCompatActivity
 
 class TasksActivity : DaggerAppCompatActivity() {
     @Inject
-    internal var mTasksPresenter: TasksPresenter? = null
+    lateinit var mTasksPresenter: TasksContract.Presenter
     @Inject
-    internal var taskFragmentProvider: Lazy<TasksFragment>? = null
+    lateinit var taskFragmentProvider: Lazy<TasksFragment>
     private var mDrawerLayout: DrawerLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

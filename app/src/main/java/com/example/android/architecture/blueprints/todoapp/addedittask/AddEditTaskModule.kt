@@ -23,19 +23,22 @@ abstract class AddEditTaskModule {
     @Binds
     internal abstract fun taskPresenter(presenter: AddEditTaskPresenter): AddEditTaskContract.Presenter
 
+    @Module
     companion object {
-
         // Rather than having the activity deal with getting the intent extra and passing it to the presenter
         // we will provide the taskId directly into the AddEditTaskActivitySubcomponent
         // which is what gets generated for us by Dagger.Android.
         // We can then inject our TaskId and state into our Presenter without having pass through dependency from
         // the Activity. Each UI object gets the dependency it needs and nothing else.
+
+        @JvmStatic
         @Provides
         @ActivityScoped
-        internal fun provideTaskId(activity: AddEditTaskActivity): String? {
+        internal fun provideTaskId(activity: AddEditTaskActivity): String {
             return activity.intent.getStringExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)
         }
 
+        @JvmStatic
         @Provides
         @ActivityScoped
         internal fun provideStatusDataMissing(activity: AddEditTaskActivity): Boolean {

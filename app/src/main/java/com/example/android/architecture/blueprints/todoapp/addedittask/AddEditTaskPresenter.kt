@@ -101,8 +101,8 @@ constructor(private val mTaskId: String?, tasksRepository: TasksRepository,
     override fun onTaskLoaded(task: Task) {
         // The view may not be able to handle UI updates anymore
         if (mAddTaskView != null && mAddTaskView!!.isActive) {
-            mAddTaskView!!.setTitle(task.title)
-            mAddTaskView!!.setDescription(task.description)
+            mAddTaskView!!.setTitle(task.title!!)
+            mAddTaskView!!.setDescription(task.description!!)
         }
         isDataMissing = false
     }

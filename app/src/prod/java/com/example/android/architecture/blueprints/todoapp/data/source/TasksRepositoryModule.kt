@@ -58,6 +58,7 @@ class TasksRepositoryModule {
                 AppExecutors.MainThreadExecutor())
     }
 
+    @Module
     companion object {
 
         private val THREAD_COUNT = 3

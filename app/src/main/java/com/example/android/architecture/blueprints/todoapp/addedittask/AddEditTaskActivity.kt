@@ -30,16 +30,16 @@ import dagger.android.support.DaggerAppCompatActivity
 /**
  * Displays an add or edit task screen.
  */
-class AddEditTaskActivity : DaggerAppCompatActivity() {
+public class AddEditTaskActivity : DaggerAppCompatActivity() {
 
     @Inject
-    internal var mAddEditTasksPresenter: AddEditTaskContract.Presenter? = null
+    lateinit var mAddEditTasksPresenter: AddEditTaskContract.Presenter
 
     @Inject
-    internal var mFragment: AddEditTaskFragment? = null
+    lateinit var mFragment: AddEditTaskFragment
 
     @Inject
-    internal var mTaskId: String? = null
+    lateinit var mTaskId: String
 
     private var mActionBar: ActionBar? = null
 

@@ -34,10 +34,12 @@ abstract class TasksRepositoryModule {
     @Remote
     internal abstract fun provideTasksRemoteDataSource(dataSource: FakeTasksRemoteDataSource): TasksDataSource
 
+    @Module
     companion object {
 
         private val THREAD_COUNT = 3
 
+        @JvmStatic
         @Singleton
         @Provides
         internal fun provideDb(context: Application): ToDoDatabase {
@@ -45,12 +47,14 @@ abstract class TasksRepositoryModule {
                     .build()
         }
 
+        @JvmStatic
         @Singleton
         @Provides
         internal fun provideTasksDao(db: ToDoDatabase): TasksDao {
             return db.taskDao()
         }
 
+        @JvmStatic
         @Singleton
         @Provides
         internal fun provideAppExecutors(): AppExecutors {

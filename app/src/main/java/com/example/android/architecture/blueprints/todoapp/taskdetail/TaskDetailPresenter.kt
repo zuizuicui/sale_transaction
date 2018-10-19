@@ -65,7 +65,7 @@ constructor(
             mTaskDetailView!!.setLoadingIndicator(true)
         }
         mTasksRepository.getTask(mTaskId!!, object : TasksDataSource.GetTaskCallback {
-            override fun onTaskLoaded(task: Task?) {
+            override fun onTaskLoaded(task: Task) {
                 // The view may not be able to handle UI updates anymore
                 if (mTaskDetailView == null || !mTaskDetailView!!.isActive) {
                     return
@@ -96,7 +96,7 @@ constructor(
             return
         }
         if (mTaskDetailView != null) {
-            mTaskDetailView!!.showEditTask(mTaskId)
+            mTaskDetailView!!.showEditTask(mTaskId!!)
         }
     }
 
@@ -158,7 +158,7 @@ constructor(
             }
         } else {
             if (mTaskDetailView != null) {
-                mTaskDetailView!!.showTitle(title)
+                mTaskDetailView!!.showTitle(title!!)
             }
         }
 
@@ -168,7 +168,7 @@ constructor(
             }
         } else {
             if (mTaskDetailView != null) {
-                mTaskDetailView!!.showDescription(description)
+                mTaskDetailView!!.showDescription(description!!)
             }
         }
         if (mTaskDetailView != null) {

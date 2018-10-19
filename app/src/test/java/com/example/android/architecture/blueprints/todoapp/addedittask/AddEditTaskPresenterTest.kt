@@ -16,9 +16,12 @@
 
 package com.example.android.architecture.blueprints.todoapp.addedittask
 
+import com.example.android.architecture.blueprints.todoapp.any
+import com.example.android.architecture.blueprints.todoapp.capture
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.eq
 
 import org.junit.Before
 import org.junit.Test
@@ -29,10 +32,8 @@ import org.mockito.MockitoAnnotations
 
 import dagger.Lazy
 
-import org.mockito.Matchers.any
-import org.mockito.Matchers.eq
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 
 /**
  * Unit tests for the implementation of [AddEditTaskPresenter].
@@ -40,17 +41,17 @@ import org.mockito.Mockito.`when`
 class AddEditTaskPresenterTest {
 
     @Mock
-    private val mTasksRepository: TasksRepository? = null
+    private lateinit var mTasksRepository: TasksRepository
 
     @Mock
-    private val mAddEditTaskView: AddEditTaskContract.View? = null
+    private lateinit var mAddEditTaskView: AddEditTaskContract.View
 
     /**
      * [ArgumentCaptor] is a powerful Mockito API to capture argument values and use them to
      * perform further actions or assertions on them.
      */
     @Captor
-    private val mGetTaskCallbackCaptor: ArgumentCaptor<TasksDataSource.GetTaskCallback>? = null
+    private lateinit var mGetTaskCallbackCaptor: ArgumentCaptor<TasksDataSource.GetTaskCallback>
 
     private var mAddEditTaskPresenter: AddEditTaskPresenter? = null
     private val mBooleanLazy = Lazy { true }
@@ -75,7 +76,7 @@ class AddEditTaskPresenterTest {
                 "Some Task Description")
 
         // Then a task is saved in the repository and the view updated
-        verify(mTasksRepository).saveTask(any(Task::class.java)) // saved to the model
+        verify(mTasksRepository).saveTask(any<Task>()) // saved to the model
         verify(mAddEditTaskView).showTasksList() // shown in the UI
     }
 
@@ -102,7 +103,7 @@ class AddEditTaskPresenterTest {
         mAddEditTaskPresenter!!.saveTask("New Task Title", "Some Task Description")
 
         // Then a task is saved in the repository and the view updated
-        verify(mTasksRepository).saveTask(any(Task::class.java)) // saved to the model
+        verify(mTasksRepository).saveTask(any()) // saved to the model
         verify(mAddEditTaskView).showTasksList() // shown in the UI
     }
 
@@ -117,7 +118,7 @@ class AddEditTaskPresenterTest {
 
 
         // Then the task repository is queried and the view updated
-        verify(mTasksRepository).getTask(eq(testTask.id), mGetTaskCallbackCaptor!!.capture())
+        verify(mTasksRepository).getTask(eq(testTask.id), capture(mGetTaskCallbackCaptor))
 
         // Simulate callback
         mGetTaskCallbackCaptor.value.onTaskLoaded(testTask)

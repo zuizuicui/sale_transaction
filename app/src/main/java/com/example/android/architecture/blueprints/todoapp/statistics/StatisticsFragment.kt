@@ -37,26 +37,25 @@ class StatisticsFragment @Inject
 constructor() : DaggerFragment(), StatisticsContract.View {
 
     @Inject
-    internal var mPresenter: StatisticsContract.Presenter? = null
+    lateinit var mPresenter: StatisticsContract.Presenter
     private var mStatisticsTV: TextView? = null
 
     override val isActive: Boolean
         get() = isAdded
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val root = inflater!!.inflate(R.layout.statistics_frag, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val root = inflater.inflate(R.layout.statistics_frag, container, false)
         mStatisticsTV = root.findViewById(R.id.statistics)
         return root
     }
 
     override fun onResume() {
         super.onResume()
-        mPresenter!!.takeView(this)
+        mPresenter.takeView(this)
     }
 
     override fun onDestroy() {
-        mPresenter!!.dropView()
+        mPresenter.dropView()
         super.onDestroy()
     }
 
